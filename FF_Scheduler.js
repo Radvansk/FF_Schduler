@@ -1,7 +1,8 @@
+var _leagueMemberData = [];
+var _leagueSchedule = [];
 //setTeamsForRml();
 $('#createSchedule').on('click', generateSchedule);
 //$('#createSchedule').click();
-var _leagueMemberData = [];
 function generateSchedule() {
 	var teams = getTeams();
 	if (teams.length !== 12) return;
@@ -32,18 +33,18 @@ function getTeams() {
 	return teams;
 }
 function setTeamInfo(teams) {
-	var teamData = [];
 	for (var i = 0; i < teams.length; i++) {
 		var obj = {};
 		obj.id = i;
 		obj.name = teams[i];
 		obj.divisionId = (i <=3) ? 1 : (i <= 7) ? 2 : 3;
 		obj.schedule = [];
+		obj.homeGames = 0;
+		obj.awayGames = 0;
 		for (var j = 1; j <= 14; j++) obj.schedule.push(null);
-		teamData.push(obj);
+		_leagueMemberData.push(obj);	
 	}
-	console.log('teamdata', teamData);
-	_leagueMemberData = teamData;
+	console.log(_leagueMemberData);
 }
 function setTeamsForRml() {
 	var members = ['Scott', 'Aborub', 'Henley', 'Steve', 'Bruno','Jeff', 'Seth', 'Bob', 'James', 'Chuck', 'John', 'Tony'];
@@ -106,7 +107,7 @@ function getTeamById(teamId) {
 	for (var i = 0; i < _leagueMemberData.length; i++) {
 		if (teamId === _leagueMemberData[i].id) return _leagueMemberData[i];
 	}
-	console.log('getTeamById', 'No Team Found with id of' + teamId);
+	console.log('getTeamById', 'No Team Found with id of ' + teamId);
 	return null;
 }
 function setNonDivisionWeeks(weekNumber) {
@@ -154,7 +155,7 @@ function setNonDivisionWeeks(weekNumber) {
 			[2, 9],
 			[3, 10],
 			[4, 11]
-		],
+		],	
 		week6: [
 			[0, 11], 
 			[1, 10],
@@ -170,14 +171,14 @@ function setNonDivisionWeeks(weekNumber) {
 			[3, 11],
 			[7, 9],
 			[6, 8]
-		],
+		],	
 		week8: [
-			[0, 6], 
-			[1, 11],
-			[2, 10],
-			[3, 7],
-			[4, 9],
-			[5, 8]
+			[0, 7],
+			[6, 9],
+			[2, 11],
+			[1, 8],
+			[5, 10],
+			[3, 4]
 		],
 		week9: [
 			[0, 8], 
@@ -188,12 +189,12 @@ function setNonDivisionWeeks(weekNumber) {
 			[3, 5]
 		],
 		week10: [
-			[0, 7],
-			[6, 9],
-			[2, 11],
-			[1, 8],
-			[5, 10],
-			[3, 4]
+			[0, 6], 
+			[1, 11],
+			[2, 10],
+			[3, 7],
+			[4, 9],
+			[5, 8]
 		],
 		week11: [
 			[0, 9],
@@ -246,7 +247,8 @@ function setNonDivisionWeeks(weekNumber) {
 		}
 		weekIndex++;
 	}
-	/**
+	
+	/*
 	// verify unique non-divisional games
 	for (var n = 0; n < _leagueMemberData.length; n++) {
 		var team = _leagueMemberData[n];
@@ -259,33 +261,80 @@ function setNonDivisionWeeks(weekNumber) {
 			nonDivisionalGames.push(opponent);
 		}
 	}
-	**/
+	*/
 }
 function renderSchedule() {
-	console.log('hey');
 	var html = '<ul class="flex">';
-	for (var i = 1; i <= 14; i++) {
-		html += '<li><h2>Week ' + i + '</h2><table id="week' + i + '" cellspacing="0" cellpadding="0">';
-		html += '<thead><tr><th>Home</th><th>Away</th></thead><tbody>';
+	var weeks1to3 = [];
+	var weeks4to11 = [];
+	var weeks12to14 = [];
+	for (var i = 1; i <= 3; i++) weeks1to3.push(tableMakerHtml(i, true));
+	for (var j = 12; j <= 14; j++) weeks12to14.push(tableMakerHtml(j, true)); // need last 3 weeks before middle of season so division each get home/away game
+	for (var k = 4; k <= 11; k++) weeks4to11.push(tableMakerHtml(k, false));
+	html += '<li>' + weeks1to3.join('</li><li>') + '</li>';	
+	html += '<li>' + weeks4to11.join('</li><li>') + '</li>';
+	html += '<li>' + weeks12to14.join('</li><li>') + '</li>';
+	html += '</ul>';
+	$('#leagueSchedules').html(html);
+}
+function tableMakerHtml(weekNumber, isDivisionWeek) {
+	var leagueSchedule = getLeagueSchedule();
+	var week = leagueSchedule[weekNumber - 1];
+	var html = '<h2>Week ' + weekNumber + '</h2><table id="week' + weekNumber + '" cellspacing="0" cellpadding="0">';
+	html += '<thead><tr><th>Away</th><th>Home</th></thead><tbody>';
+	for(var i = 0; i < week.length; i++) {
+		html += '<tr>';
+		var game = week[i];
+		var team1 = getTeamById(game[0]);
+		var team2 = getTeamById(game[1]);
+		if (isDivisionWeek) {
+			if (weekNumber > 11) {
+				team1 = getTeamById(game[1]);
+				team2 = getTeamById(game[0]);
+			}
+			html += '<td>' + team2.name + '</td><td>' + team1.name + '</td>';
+			team1.homeGames++;
+			team2.awayGames++;
+		}
+		else {
+			var isHome = team1.homeGames <= team2.homeGames;		
+			if (weekNumber === 5 && team1.id === 1) isHome = false; // team 1 has 8 home games & team 6 has 8 away games.  flipping this flag sets even 7/7 home & away for entire league
+			if (isHome) {
+				html += '<td>' + team2.name + '</td><td>' + team1.name + '</td>';
+				team1.homeGames++;
+				team2.awayGames++;
+			}
+			else {
+				html += '<td>' + team1.name + '</td><td>' + team2.name + '</td>';
+				team1.awayGames++;
+				team2.homeGames++;
+			}
+		}
+		html += '</tr>';			
+	}
+	html += '</tbody></table>';	
+	return html;
+}
+function getLeagueSchedule() {
+	if (_leagueSchedule.length > 0) return _leagueSchedule;
+	var weeks = [];
+	for (var i = 0; i < 14; i++) {
+		var week = [];
 		var teamsInWeek = [];
 		for (var j = 0; j < _leagueMemberData.length; j++) {
 			var team = _leagueMemberData[j];
 			var schedule = team.schedule;
-			var opponentId = schedule[i-1]
+			var opponentId = schedule[i];
 			if (teamsInWeek.indexOf(team.id) >= 0 || teamsInWeek.indexOf(opponentId) >= 0) continue;
-			var opponentName = getTeamById(opponentId).name;
-			var isHome = i%2 == 0;
-			html += '<tr>';
-			if (isHome) 
-				html += '<td>' + team.name + '</td><td>' + opponentName + '</td>';
-			else
-				html += '<td>' + opponentName + '</td><td>' + team.name + '</td>';
-			html += '</tr>';
-			teamsInWeek.push(team.id);
+			var game = [];
+			game.push(team.id);
+			game.push(opponentId);
 			teamsInWeek.push(opponentId);
+			teamsInWeek.push(opponentId);
+			week.push(game);
 		}
-		html += '</tbody></table></li>';
+		weeks.push(week);
 	}
-	html += '</ul>';
-	$('#leagueSchedules').html(html);
+	_leagueSchedule = weeks;
+	return weeks;
 }
