@@ -1,7 +1,7 @@
 //setTeamsForRml();
 $('#createSchedule').on('click', generateSchedule);
-$('#createSchedule').click();
-//var _leagueMemberData = [];
+//$('#createSchedule').click();
+var _leagueMemberData = [];
 function generateSchedule() {
 	var teams = getTeams();
 	if (teams.length !== 12) return;
