@@ -1,0 +1,59 @@
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Fantasy Football Schedule Maker</title>
+		<meta name="description" content="Generate your league's fantasy football schedule.">
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="styles.css">
+	</head>
+	<body>
+		<div class="page-wrap">
+			<h1>Fantasy Football Schedule Maker</h1>
+			<p>I created this page because I always used the schedule maker on <a href="https://www.footballguys.com/schedule-maker" target="_blank">footballguys.com</a> and they rebuilt their site this year.</p>
+			<p>Their new schedule maker is a disaster.  If your league plays division opponents twice, the new schedule maker no longer sets them for the first three weeks and last three weeks of the season.  I think the front and back of the schedule are important for division formats so teams have more potential to control their destiny down the stretch of the regular season.</p>
+			<p>It will set division games for the first three weeks and then the rest of the division games are completely random.  Their page will have teams that play back-to-back in weeks three and four.</p>
+			<p>This page resolves all of these issues.</u>
+			<h2>Info & Directions</h2>
+			<ul class="info">
+				<li>This page is designed for 12-team leagues, with 3 divisions, and 14 regular season games.</li>
+				<li>Division opponents play each other twice in weeks 1 - 3 and weeks 12 - 14.</li>
+				<li>Each team will play all non-division teams once.</li>
+				<li>The order you enter your divisions determine the division matchup structure.  The first team entered in each division will play the fourth team entered in week 1 and week 12.  This is because many leagues I play draft divisions, and its fun that the "drafter" gets to play their first pick in week 1 and their last pick in week 3.  Keep this rule in mind when entering the teams in each division.</p>
+			</ul>
+			<ul class="division-inputs flex">
+				<li>
+					<h2>Division 1</h2>
+					<ul>
+						<li><label for="team1">Team 1:</label> <input type="text" id="team1" name="team1"></li>
+						<li><label for="team1">Team 2:</label> <input type="text" id="team2" name="team2"></li>
+						<li><label for="team1">Team 3:</label> <input type="text" id="team3" name="team3"></li>
+						<li><label for="team1">Team 4:</label> <input type="text" id="team4" name="team4"></li>
+					</ul>	
+				</li>
+				<li>				
+					<h2>Division 2</h2>
+					<ul>
+						<li><label for="team4">Team 1:</label> <input type="text" id="team5" name="team5"></li>
+						<li><label for="team4">Team 2:</label> <input type="text" id="team6" name="team6"></li>
+						<li><label for="team6">Team 3:</label> <input type="text" id="team7" name="team7"></li>
+						<li><label for="team7">Team 4:</label> <input type="text" id="team8" name="team8"></li>
+					</ul>
+				</li>
+				<li>				
+					<h2>Division 3</h2>
+					<ul>
+						<li><label for="team4">Team 1:</label> <input type="text" id="team9" name="team9"></li>
+						<li><label for="team4">Team 2:</label> <input type="text" id="team10" name="team10"></li>
+						<li><label for="team6">Team 3:</label> <input type="text" id="team11" name="team11"></li>
+						<li><label for="team7">Team 4:</label> <input type="text" id="team12" name="team12"></li>
+					</ul>	
+				</li>				
+			</ul>
+			<hr>
+			<input type="button" id="createSchedule" value="Create Schedule">
+			<div id="leagueSchedules"></div>
+		</div>
+		<script src="ff_scheduler.js"></script>
+	</body>
+</html>
