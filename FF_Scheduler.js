@@ -1,11 +1,7 @@
 var _leagueMemberData = [];
 var _leagueSchedule = [];
-//setTeamsForRml();
 $('#createSchedule').on('click', generateSchedule);
-//$('#createSchedule').click();
 function generateSchedule() {
-	_leagueMemberData = [];
-	_leagueSchedule = [];
 	var teams = getTeams();
 	if (teams.length !== 12) return;
 	setTeamInfo(teams);
@@ -35,6 +31,10 @@ function getTeams() {
 	return teams;
 }
 function setTeamInfo(teams) {
+	if (_leagueMemberData.length > 0) { // user changed teams after creation
+		_leagueMemberData = [];
+		_leagueSchedule = [];
+	}
 	for (var i = 0; i < teams.length; i++) {
 		var obj = {};
 		obj.id = i;
