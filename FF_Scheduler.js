@@ -4,6 +4,8 @@ var _leagueSchedule = [];
 $('#createSchedule').on('click', generateSchedule);
 //$('#createSchedule').click();
 function generateSchedule() {
+	_leagueMemberData = [];
+	_leagueSchedule = [];
 	var teams = getTeams();
 	if (teams.length !== 12) return;
 	setTeamInfo(teams);
